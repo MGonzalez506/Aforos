@@ -7,7 +7,7 @@ import threading
 import mysql.connector
 from mysql.connector import errorcode
 from time import sleep
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 
@@ -15,7 +15,7 @@ from datetime import datetime
 start = time.perf_counter()
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-output_file_addr = str(THIS_FOLDER + ("/DumpFile.csv"))
+output_file_addr = str(THIS_FOLDER + ("/Resultado.csv"))
 
 try:
 	cnx = mysql.connector.connect(user='Username',
@@ -31,7 +31,10 @@ except mysql.connector.Error as err:
 		print(err)
 else:
 	cursor = cnx.cursor()
-	add_event = ("SELECT * FROM table_name WHERE timestamp > DATE_SUB(NOW(), INTERVAL -12 HOUR)")
+	beggining = datetime.now() - timedelta(hours=24)
+	end = datetime.now()
+	print(f'Beggining time: {beggining}, finish time: {end}')
+	add_event = "SELECT * FROM historial_aforos WHERE timestamp BETWEEN '" + str(beggining) + "' AND '" + str(end) + "'"
 	cursor.execute(add_event)
 	result = cursor.fetchall()
 	cnx.commit()
